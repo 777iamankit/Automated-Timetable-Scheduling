@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container details-container">
+        <h1>Details</h1>
+        <div class="details-section">
+            <p><strong>Day:</strong> {{ day }}</p>
+            <p><strong>Faculty:</strong> {{ faculty }}</p>
+            <p><strong>Classroom:</strong> {{ classroom }}</p>
+            <p><strong>Subject:</strong> {{ subject }}</p>
+        </div>
+        <h2>Faculty Profile</h2>
+        <div class="profile-section">
+            <p><strong>Name:</strong> {{ faculty_profile.name }}</p>
+            <p><strong>Experience:</strong> {{ faculty_profile.experience }}</p>
+            <p><strong>Expertise:</strong> {{ faculty_profile.expertise }}</p>
+        </div>
+        <h2>Performance Chart</h2>
+        <div class="chart-section">
+            <img src="{{ url_for('static', filename='performance_chart.png') }}" alt="Performance Chart">
+        </div>
+    </div>
+</body>
+</html>

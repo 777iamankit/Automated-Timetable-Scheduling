@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import random
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
@@ -68,12 +69,14 @@ def modify_timetable():
 
 def generate_conflict_free_timetable(faculty_availability, classrooms):
     days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+    subjects = ['Math', 'Science', 'History', 'Art', 'Music']  # Sample subjects
     timetable = {day: [] for day in days}
 
     for faculty, availability in faculty_availability.items():
         for day in availability:
             classroom = random.choice(classrooms)
-            timetable[day].append({'faculty': faculty, 'classroom': classroom})
+            subject = random.choice(subjects)
+            timetable[day].append({'faculty': faculty, 'classroom': classroom, 'subject': subject})
 
     return timetable
 
@@ -101,9 +104,37 @@ def convert_timetable_to_tree(timetable):
     for day, sessions in timetable.items():
         day_node = {'name': day, 'children': []}
         for session in sessions:
-            day_node['children'].append({'name': f"{session['faculty']} in {session['classroom']}"})
+            day_node['children'].append({'name': f"{session['faculty']} in {session['classroom']} for {session['subject']}"})
         tree_data['children'].append(day_node)
     return tree_data
+
+@app.route('/details', methods=['GET'])
+def details():
+    day = request.args.get('day')
+    faculty = request.args.get('faculty')
+    classroom = request.args.get('classroom')
+    subject = request.args.get('subject')
+
+    # Fetch detailed information from the database
+    # For demonstration, we'll use static data
+    faculty_profile = {
+        'name': faculty,
+        'experience': '10 years',
+        'expertise': 'Computer Science'
+    }
+
+    # Generate a pie chart for performance (example data)
+    performance_data = [30, 70]  # Example data: 30% absent, 70% present
+    labels = ['Absent', 'Present']
+    colors = ['#ff9999','#66b3ff']
+
+    # Create a pie chart (using matplotlib as an example)
+    plt.figure(figsize=(6, 6))
+    plt.pie(performance_data, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+    plt.title(f'Performance of {faculty}')
+    plt.savefig('static/performance_chart.png')
+
+    return render_template('details.html', day=day, faculty=faculty, classroom=classroom, subject=subject, faculty_profile=faculty_profile)
 
 if __name__ == '__main__':
     app.run(debug=True)

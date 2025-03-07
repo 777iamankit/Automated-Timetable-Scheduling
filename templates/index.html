@@ -22,6 +22,7 @@
                         <th>Day</th>
                         <th>Faculty</th>
                         <th>Classroom</th>
+                        <th>Subjects</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,7 +42,7 @@
                 let timetableDiv = document.getElementById('timetable');
                 timetableDiv.innerHTML = '<h2>Generated Timetable</h2>';
                 for (let day in data) {
-                    timetableDiv.innerHTML += `<p><strong>${day}:</strong> ${data[day].map(session => `${session.faculty} in ${session.classroom}`).join(', ')}</p>`;
+                    timetableDiv.innerHTML += `<p><strong>${day}:</strong> ${data[day].map(session => `${session.faculty} in ${session.classroom} for ${session.subject}`).join(', ')}</p>`;
                 }
                 updateTreeVisualization();
                 updateScheduleTable(data);
@@ -57,7 +58,7 @@
                 let timetableDiv = document.getElementById('timetable');
                 timetableDiv.innerHTML = '<h2>Modified Timetable</h2>';
                 for (let day in data) {
-                    timetableDiv.innerHTML += `<p><strong>${day}:</strong> ${data[day].map(session => `${session.faculty} in ${session.classroom}`).join(', ')}</p>`;
+                    timetableDiv.innerHTML += `<p><strong>${day}:</strong> ${data[day].map(session => `${session.faculty} in ${session.classroom} for ${session.subject}`).join(', ')}</p>`;
                 }
                 updateTreeVisualization();
                 updateScheduleTable(data);
@@ -125,7 +126,10 @@
             for (let day in timetable) {
                 timetable[day].forEach(session => {
                     const row = document.createElement("tr");
-                    row.innerHTML = `<td>${day}</td><td>${session.faculty}</td><td>${session.classroom}</td>`;
+                    row.innerHTML = `<td>${day}</td><td>${session.faculty}</td><td>${session.classroom}</td><td class="subject-code">${session.subject}</td>`;
+                    row.addEventListener('click', () => {
+                        window.location.href = `/details?day=${day}&faculty=${session.faculty}&classroom=${session.classroom}&subject=${session.subject}`;
+                    });
                     tableBody.appendChild(row);
                 });
             }
