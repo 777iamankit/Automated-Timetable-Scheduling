@@ -10,6 +10,13 @@
 <body>
     <div class="container">
         <h1>Automated Timetable Scheduler</h1>
+        <div id="faculty-input">
+            <h2>Enter Faculty Details</h2>
+            <div id="faculty-list">
+                <!-- Faculty input fields will be dynamically inserted here -->
+            </div>
+            <button id="add-faculty">Add Faculty</button>
+        </div>
         <button id="generate-timetable">Generate Timetable</button>
         <button id="modify-timetable">Modify Timetable</button>
         <div id="timetable"></div>
@@ -33,9 +40,39 @@
     </div>
 
     <script>
+        document.getElementById('add-faculty').addEventListener('click', function() {
+            const facultyList = document.getElementById('faculty-list');
+            const div = document.createElement('div');
+            div.classList.add('faculty-input');
+            div.innerHTML = `
+                <input type="text" placeholder="Faculty Name" required>
+                <select multiple required>
+                    <option value="Mon">Monday</option>
+                    <option value="Tue">Tuesday</option>
+                    <option value="Wed">Wednesday</option>
+                    <option value="Thu">Thursday</option>
+                    <option value="Fri">Friday</option>
+                </select>
+            `;
+            facultyList.appendChild(div);
+        });
+
         document.getElementById('generate-timetable').addEventListener('click', function() {
+            const facultyInputs = document.querySelectorAll('.faculty-input');
+            const facultyData = [];
+
+            facultyInputs.forEach(input => {
+                const name = input.querySelector('input').value;
+                const availability = Array.from(input.querySelector('select').selectedOptions).map(option => option.value);
+                facultyData.push({ name, availability });
+            });
+
             fetch('/generate_timetable', {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ faculty: facultyData })
             })
             .then(response => response.json())
             .then(data => {

@@ -12,22 +12,8 @@ faculty_collection = db['faculty']
 timetable_collection = db['timetable']
 classroom_collection = db['classrooms']
 
-# Sample data for faculty availability (this should be stored in MongoDB)
-faculty_availability = {
-    'Professor A': ['Mon', 'Wed', 'Fri'],
-    'Professor B': ['Tue', 'Thu'],
-    'Professor C': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-}
-
 # Sample data for classrooms
 classrooms = ['Room 101', 'Room 102', 'Room 103', 'Room 104', 'Room 105']
-
-# Insert sample data into MongoDB
-for faculty, availability in faculty_availability.items():
-    faculty_collection.insert_one({'name': faculty, 'availability': availability})
-
-for classroom in classrooms:
-    classroom_collection.insert_one({'name': classroom})
 
 @app.route('/')
 def index():
@@ -35,10 +21,9 @@ def index():
 
 @app.route('/generate_timetable', methods=['POST'])
 def generate_timetable():
-    # Get faculty availability from MongoDB
-    faculty_availability = {}
-    for faculty in faculty_collection.find():
-        faculty_availability[faculty['name']] = faculty['availability']
+    # Get faculty names and availability from the request
+    faculty_data = request.json.get('faculty', [])
+    faculty_availability = {faculty['name']: faculty['availability'] for faculty in faculty_data}
 
     # Get classrooms from MongoDB
     classrooms = [classroom['name'] for classroom in classroom_collection.find()]
